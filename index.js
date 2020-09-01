@@ -9,7 +9,7 @@ const app = express();
 //may have multiple applications in any given product/project
 
 app.get('/', (req, res) => {
-  res.send({ hi: 'there' });
+  res.send({ bye: 'buddy' });
 }); //this code snippet is a simple example of a route handler
 
 const PORT = process.env.PORT || 5000; //whenever Heroku runs our app, can inject environment variables, Heroku's opportunity to pass on runtime configurations
