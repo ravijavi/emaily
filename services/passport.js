@@ -27,20 +27,18 @@ passport.use(
         callbackURL: '/auth/google/callback', //add logic to handle user coming back from OAuth flow
         proxy: true
       },
-      (accessToken, refreshToken, profile, done) => {
-        User.findOne({ googleId: profile.id })
-        .then((existingUser) => {
+      async (accessToken, refreshToken, profile, done) => {
+        const existingUser = await User.findOne({ googleId: profile.id })
           if (existingUser) {
             //we already have a record with the given profile id
-            done(null, existingUser);
-
-          } else {
+            return done(null, existingUser);
+          } 
             //we don't have auser record with this id, make a new record
-            new User({ googleId: profile.id}).save() //'id' is the one coming from user's google profile
-            .then(user => done(null, user));
+            const user = await new User({ googleId: profile.id}).save() //'id' is the one coming from user's google profile
+            done(null,user);
             //when using save fxn, take this record/model instance and save it to the database for us
-          }
-        }) //initiate a search within collection in MongoDB, this line does return a user directly, however
+          
+        //initiate a search within collection in MongoDB, this line does return a user directly, however
         //this will return a promise for us
 
         //paren's are the 2nd paramter of this function
