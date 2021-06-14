@@ -26,3 +26,9 @@ export const fetchUser = () => async dispatch => {
 
     //instead of function keyword, will just use arrow function instead
     //don't need parentheses around dispatch since there is only one function
+export const handleToken = (token) => async dispatch => {
+    const res = await axios.post('/api/stripe', token);
+
+    dispatch({ type: FETCH_USER, payload: res.data }); //update the user model inside of the auth reducer
+};
+    //async action creator

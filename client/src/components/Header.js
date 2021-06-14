@@ -15,8 +15,8 @@ class Header extends Component {
                 );
             default: //if not null or false, they must be logged in
                 return [
-                <li><Payments /></li>,
-                <li><a href="/api/logout">Logout</a></li>
+                <li key="1"><Payments /></li>,
+                <li key="2"><a href="/api/logout">Logout</a></li>
                 ];
         }
     }
