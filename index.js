@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
+const bodyParser = require('body-parser');
 require('./models/User');
 
 /*const passportConfig = */ require('./services/passport'); //don't need to make this an obj
@@ -18,7 +19,7 @@ mongoose.connect(keys.mongoURI);
 //uses ES2015 to implement this flavor of import modules
 const app = express();
 //may have multiple applications in any given product/project
-
+app.use(bodyParser.json()); //this middleware will parse the body and assign it to the req.body property of the incoming request object
 app.use(
     cookieSession({
         maxAge: 30 * 24* 60 *60 * 1000, //'maxAge' is measured in milliseconds
@@ -30,7 +31,7 @@ app.use(passport.session());
 
 //authRoutes(app); --> this is one way to do it, below is a more concise way to handle authRoutes
 require('./routes/authRoutes')(app); //when we require the authRoutes file, it returns a function
-
+require('./routes/billingRoutes')(app); //both of these return/export a function, we call it with the express app object in the 2nd paren's
 
 //tell express to involve passport and enter user into passport function to get them into OAuth flow
 //create new instance of the google passport strategy. Will put configurations in GoogleStrategy parameter field

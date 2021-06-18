@@ -8,7 +8,8 @@ const { Schema }  = mongoose; //this statement is equivalent to the 2 lines abov
 //this is a prime example of destructuring
 
 const userSchema = new Schema({ //define required props in each record
-    googleId: String
+    googleId: String,
+    credits: { type: Number, default: 0 } //need to default the credits to 0, need to pay us first! Can use an object to ensure that we specify the credits is an integer as well as specifying the default value. Check out mongoose docs to see what other kinds of specifications you can make to a given property
 });
 //can freely add or subtract properties as needed
 
