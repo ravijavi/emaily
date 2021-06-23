@@ -33,6 +33,20 @@ app.use(passport.session());
 require('./routes/authRoutes')(app); //when we require the authRoutes file, it returns a function
 require('./routes/billingRoutes')(app); //both of these return/export a function, we call it with the express app object in the 2nd paren's
 
+
+//make sure Express behaves correctly when in production
+if (process.env.NODE_ENV === 'production') {
+    //only going to run if in Heroku production
+    //Express will serve up production assets like our main.js file, or main.css file
+    app.use(express.static('client/build')); //if any get request comes in and we don't understand what it is for, then look into client/build directory to find a match
+    const path = require('path');
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    }); //serve up html document since we assume React router will handle it
+
+    //Express will serve up the index.html file if it doesn't recognize the route
+}
+
 //tell express to involve passport and enter user into passport function to get them into OAuth flow
 //create new instance of the google passport strategy. Will put configurations in GoogleStrategy parameter field
 //4;
