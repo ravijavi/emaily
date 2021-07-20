@@ -4,6 +4,7 @@ const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 require('./models/User');
+require('./models/Survey');
 
 /*const passportConfig = */ require('./services/passport'); //don't need to make this an obj
 //const authRoutes = require('./routes/authRoutes'); //function that takes our app obj and uses it here
@@ -32,6 +33,7 @@ app.use(passport.session());
 //authRoutes(app); --> this is one way to do it, below is a more concise way to handle authRoutes
 require('./routes/authRoutes')(app); //when we require the authRoutes file, it returns a function
 require('./routes/billingRoutes')(app); //both of these return/export a function, we call it with the express app object in the 2nd paren's
+require('./routes/surveyRoutes')(app);
 
 
 //make sure Express behaves correctly when in production
