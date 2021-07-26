@@ -7,7 +7,7 @@ const surveySchema = new Schema({
     body: String,
     subject: String,
     //recipients: [String], will change this to conform to the recipients schema instead of this initial object declaration
-    recipient: [RecipientSchema], //now it is an array of RecipientSchema objects, this is how we create a sub-document collection
+    recipients: [RecipientSchema], //now it is an array of RecipientSchema objects, this is how we create a sub-document collection
     yes: { type: Number, default: 0 },
     no: { type: Number, default: 0 },
     _user: { type: Schema.Types.ObjectId, ref: 'User' },

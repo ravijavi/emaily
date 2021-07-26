@@ -9,6 +9,10 @@ import reduxThunk from 'redux-thunk';
 
 import App from './components/App';
 import reducers from './reducers';
+
+//Development only axios helpers
+import axios from 'axios';
+window.axios = axios;
 //action creators used to modify the state that is contained in the redux store
 
 
