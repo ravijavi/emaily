@@ -36,7 +36,7 @@ function validate(values) {
     //api is easy in practice, but conceptually difficult
     const errors = {}; //if obj is empty, then we know there is no issue with the emails
     
-    errors.emails = validateEmails(values.emails || '');
+    errors.recipients = validateEmails(values.recipients || '');
 
     _.each(formFields, ({ name }) => {
         //using lodash library to iterate over FIELDS
