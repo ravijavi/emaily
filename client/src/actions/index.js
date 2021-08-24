@@ -33,11 +33,11 @@ export const handleToken = token => async dispatch => {
 };
     //async action creator
 
-export const submitSurvey = values => async dispatch => {
+export const submitSurvey = (values, history) => async dispatch => {
     const res = await axios.post('/api/surveys', values);
     //post request being made to surveys in api folder, data I pass along is values
-
     //dispatch some kind of action to say everything went okay
+    history.push('/surveys');
     //update local user model
     dispatch({ type: FETCH_USER, payload: res.data });
 };

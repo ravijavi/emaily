@@ -10,6 +10,12 @@ module.exports = app => {
     app.get('/api/surveys/thanks', (req, res) => {
         res.send('Thanks for voting!');
     });
+
+    app.post('/api/surveys/webhooks', (req, res) => {
+        console.log(req.body);
+        res.send({}); //send back empty object to sendgrid
+    });
+
     //going to take a POST req to api/surveys
     app.post('/api/surveys', requireLogin, requireCredits, async (req, res) => {
         //make sure you're logged in and that you have enough credits to send bulk email
@@ -34,7 +40,7 @@ module.exports = app => {
             await mailer.send();
             await survey.save();
             req.user.credits -= 1;
-            await req.user.save(); //can now consider this 'user' to be 'stale'
+            const user = await req.user.save(); //can now consider this 'user' to be 'stale'
             //will eventually be resolved with our user
 
             res.send(user); //specifically indicate that this is the new total of credits
