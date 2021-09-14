@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const { Path } = require('path-parser');
+const { URL } = require('url');
 const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
 const requireCredits = require('../middlewares/requireCredits');
@@ -7,13 +10,50 @@ const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 const Survey = mongoose.model('surveys');
 
 module.exports = app => {
-    app.get('/api/surveys/thanks', (req, res) => {
+    app.get('/api/surveys', requireLogin, async (req, res) => {
+        //pull out all the different surveys that were created by the user
+        const surveys = await Survey.find({ _user: req.user.id })
+        .select({ recipients: false }); //async query so we use await
+
+        res.send(surveys);
+    });
+
+    app.get('/api/surveys/:surveyId/:choice', (req, res) => {
         res.send('Thanks for voting!');
     });
 
     app.post('/api/surveys/webhooks', (req, res) => {
-        console.log(req.body);
-        res.send({}); //send back empty object to sendgrid
+        // console.log(req.body);
+        // res.send({}); //send back empty object to sendgrid
+        const p = new Path('/api/surveys/:surveyId/:choice'); //path object that we can use to look at pathname and extract out surveyId and a choice
+        _.chain(req.body)
+        .map(({ email, url }) => {
+            //only getting route with url helper
+            //take full url and just extract route
+            const match = p.test(new URL(url).pathname); //match will either be an object or it will be null
+            if (match) {
+                 return { email, surveyId: match.surveyId, choice: match.choice }; // how it would be written with ES6 destructuring --> destructured email and url at the top
+            }
+        })
+        .compact()
+        .uniqBy('email', 'surveyId')
+        .each(({ surveyId, email, choice }) => {
+            Survey.updateOne({
+                _id: surveyId,
+                recipients: {
+                    $elemMatch: { email: email, responded: false }
+                }
+            }, {
+                $inc: { [choice]: 1 },
+                $set: { 'recipients.$.responded': true },
+                lastResponded: new Date()
+            }).exec(); //short for .execute, need to execute our query
+        })
+        .value(); //ensure no duplicates of these two values in the array
+        //return only objects that are not undefined in the array
+       //console.log(events); --> when chain was assigned to a variable events
+
+       res.send({});
     });
 
     //going to take a POST req to api/surveys
